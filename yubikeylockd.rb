@@ -3,7 +3,7 @@ class Yubikeylockd < Formula
   homepage 'https://github.com/tstanfie/yubikeylockd'
   url 'https://github.com/tstanfie/yubikeylockd/archive/v1.1.1.zip'
   head 'https://github.com/tstanfie/yubikeylockd.git'
-  sha256 '2349c08a7d485bdc80aae83b743b090de1e05789e29155414becd3a6e028cded'
+  sha256 '2e427b12a80360a710191f880f55036c47955d031413f99034b5ed8eb972f944'
 
   def install
     # ENV.deparallelize  # if your formula fails when building in parallel
