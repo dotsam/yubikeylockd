@@ -15,9 +15,7 @@
 
 typedef struct MyPrivateData {
     io_object_t			notification;
-    IOUSBDeviceInterface *	*deviceInterface;
     CFStringRef			deviceName;
-    UInt32			locationID;
 } MyPrivateData;
 
 //================================================================================================
@@ -59,14 +57,13 @@ void DeviceAdded(void *refCon, io_iterator_t iterator)
     io_service_t		usbDevice;
     IOCFPlugInInterface 	**plugInInterface=NULL;
     SInt32 			score;
-    HRESULT 			res;
 
     while ( (usbDevice = IOIteratorNext(iterator)) )
     {
         io_name_t		deviceName;
         CFStringRef		deviceNameAsCFString;
         MyPrivateData		*privateDataRef = NULL;
-        UInt32			locationID;
+        //UInt32			locationID;
 
         printf("Device 0x%08x added.\n", usbDevice);
 
@@ -108,33 +105,6 @@ void DeviceAdded(void *refCon, io_iterator_t iterator)
             printf("unable to create a plugin (%08x)\n", kr);
             continue;
         }
-
-        // // I have the device plugin, I need the device interface
-        // //
-        // res = (*plugInInterface)->QueryInterface(plugInInterface, CFUUIDGetUUIDBytes(kIOUSBDeviceInterfaceID), (LPVOID)&privateDataRef->deviceInterface);
-        // (*plugInInterface)->Release(plugInInterface);			// done with this
-        // if (res || !privateDataRef->deviceInterface)
-        // {
-        //     printf("couldn't create a device interface (%08x)\n", (int) res);
-        //     continue;
-        // }
-        //
-        // // Now that we have the IOUSBDeviceInterface, we can call the routines in IOUSBLib.h
-        // // In this case, we just want the locationID.
-        // //
-        // kr = (*privateDataRef->deviceInterface)->GetLocationID(privateDataRef->deviceInterface, &locationID);
-        // if (KERN_SUCCESS != kr)
-        // {
-        //     printf("GetLocationID returned %08x\n", kr);
-        //     continue;
-        // }
-        // else
-        // {
-        //     printf("Location ID: 0x%lx\n", (unsigned long)locationID);
-        //
-        // }
-
-        //privateDataRef->locationID = locationID;
 
         // Register for an interest notification for this device. Pass the reference to our
         // private data as the refCon for the notification.
