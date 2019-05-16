@@ -1,6 +1,6 @@
 CC=clang
 
-FRAMEWORKS:= -framework IOKit -framework CoreFoundation
+FRAMEWORKS:= -F /System/Library/PrivateFrameworks -framework IOKit -framework CoreFoundation -framework login
 
 SOURCE=yubikeylockd.c
 

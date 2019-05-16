@@ -4,7 +4,6 @@
 #include <IOKit/IOMessage.h>
 #include <IOKit/IOCFPlugIn.h>
 #include <IOKit/usb/IOUSBLib.h>
-#include <IOKit/pwr_mgt/IOPMLib.h>
 
 #include <mach/mach.h>
 #include <stdio.h>
@@ -26,6 +25,9 @@ static IONotificationPortRef	gNotifyPort;
 static io_iterator_t		gAddedIter;
 static CFRunLoopRef		gRunLoop;
 
+extern void SACScreenSaverStartNow();
+extern void SACScreenSaverStopNow();
+
 void DeviceNotification( void *		refCon,
                         io_service_t 	service,
                         natural_t 	messageType,
@@ -36,18 +38,9 @@ void DeviceNotification( void *		refCon,
         printf("Device 0x%08x removed.\n", service);
 
         // Run lock via idle
-        //
         printf("Yubikey removed. Lock the screen.\n");
 
-        // Lock the keychain too
-        system("/usr/bin/security lock-keychain");
-
-        io_registry_entry_t reg = IORegistryEntryFromPath(kIOMasterPortDefault, "IOService:/IOResources/IODisplayWrangler");
-        if (reg) {
-            IORegistryEntrySetCFProperty(reg, CFSTR("IORequestIdle"), kCFBooleanTrue);
-            IOObjectRelease(reg);
-        }
-
+        SACScreenSaverStartNow();
     }
 }
 
@@ -63,14 +56,12 @@ void DeviceAdded(void *refCon, io_iterator_t iterator)
         io_name_t		deviceName;
         CFStringRef		deviceNameAsCFString;
         MyPrivateData		*privateDataRef = NULL;
-        //UInt32			locationID;
 
         printf("Device 0x%08x added.\n", usbDevice);
 
         // Make activity and turn screen on
         printf("Wake up on Yubikey insertion.\n");
-        IOPMAssertionID assertionID;
-        IOPMAssertionDeclareUserActivity(CFSTR(""), kIOPMUserActiveLocal, &assertionID);
+        SACScreenSaverStopNow();
 
         // Add some app-specific information about this device.
         // Create a buffer to hold the data.
